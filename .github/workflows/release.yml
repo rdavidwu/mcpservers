@@ -36,9 +36,14 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create notes
+        id: create-notes
         run: |
           HASH="${{ steps.last-release.outputs.hash }}"
-          uv run --script scripts/release.py generate-notes --directory src/ $HASH > RELEASE_NOTES.md
+          if [ -z "$HASH" ]; then
+            echo "Error: HASH is empty. Ensure the previous step outputs a valid hash."
+            exit 1
+          fi
+          uv run --script scripts/release.py generate-notes --directory src/ "$HASH" > RELEASE_NOTES.md
           cat RELEASE_NOTES.md
 
       - name: Release notes
