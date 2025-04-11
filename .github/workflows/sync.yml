@@ -21,5 +21,12 @@ jobs:
         run: |
           git remote add upstream https://github.com/modelcontextprotocol/servers.git
           git fetch upstream
-          git merge upstream/main --allow-unrelated-histories -m \"Sync upstream\"
-          git push origin main
+
+      - name: Merge upstream changes
+        run: |
+          if git rev-parse --verify upstream/main; then
+            git merge upstream/main --allow-unrelated-histories -m "Sync upstream"
+            git push origin main
+          else
+            echo "Upstream branch 'main' does not exist. Skipping merge."
+          fi
